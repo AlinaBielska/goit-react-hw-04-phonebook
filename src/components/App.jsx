@@ -30,10 +30,14 @@ export class App extends Component {
   componentDidMount() {
     const storedContacts = localStorage.getItem("contacts");
     if (!storedContacts) {
-      localStorage.setItem("contacts", JSON.stringify([]));
+      localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
     } else {
-      this.setState({ contacts: JSON.parse(storedContacts) });
-    }
+      try {
+        this.setState({ contacts: JSON.parse(storedContacts) });
+      } catch (error) {
+        console.log("Invalid JSON in localStorage: " + storedContacts);
+      };
+    };
   };
 
   componentDidUpdate(prevProps, prevState) {
