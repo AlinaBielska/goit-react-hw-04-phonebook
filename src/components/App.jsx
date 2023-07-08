@@ -1,33 +1,28 @@
-import React, { Component } from "react";
+import { useState, useEffect } from "react";
 import { nanoid } from 'nanoid';
 import ContactForm from "./ContactForm/ContactForm";
 import Filter from './Filter/Filter';
 import ContactList from "./ContactList/ContactList";
 import css from './App.module.css';
 
-export class App extends Component { 
-  state = {
-    contacts: [],
-    filter: ''
-  };
+export const App = () => {
+  const [contacts, setContacts] = useState([]);
+  const [filter, setFilter] = useState('');
   
-  onInputChangeFilter = evt => {
-    this.setState({ filter: evt.target.value });
+  const onInputChangeFilter = evt => {
+    setFilter(evt.target.value);
   };
 
-  onSubmitContact = contact => {
-    const { contacts } = this.state;
+  const onSubmitContact = contact => {
     const newContact = { ...contact, id: nanoid() }
-    this.setState({
-      contacts: [...contacts, newContact]
-    });
+    setContacts([...contacts, newContact]);
   };
 
-  deleteContact = contactID => {
-    this.setState({ contacts: this.state.contacts.filter(el => el.id !== contactID) });
+  const deleteContact = contactID => {
+    setContacts(contacts.filter(el => el.id !== contactID));
   };
 
-  componentDidMount() {
+  useEffect(() => {
     const storedContacts = localStorage.getItem("contacts");
     if (!storedContacts) {
       localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
@@ -38,30 +33,30 @@ export class App extends Component {
         console.log("Invalid JSON in localStorage: " + storedContacts);
       };
     };
-  };
+  }, []);
 
-  componentDidUpdate(prevProps, prevState) {
-    const { contacts } = this.state;
-    if (prevState.contacts !== contacts) {
-      localStorage.setItem("contacts", JSON.stringify(contacts));
-    }
-  }
+  useEffect(() => {
+    localStorage.setItem("contacts", JSON.stringify(contacts));
+  }, [contacts]);
 
-  render() {
-    const { contacts, filter } = this.state;
-
-    return (
-      <div className={css.body}>
-        <h1 className={css.title}>Phonebook</h1>
-        <div className={css.wrapper}>
-          <ContactForm contacts={contacts} onSubmitContact={this.onSubmitContact} />
-          <div className={css.contacts}>
-            <h2 className={css.contactsTitle} >Contacts</h2>
-            <Filter filter={filter} onInputChangeFilter={this.onInputChangeFilter} />
-            <ContactList contacts={contacts} filter={filter} deleteContact={this.deleteContact} />
-          </div>
+  return (
+    <div className={css.body}>
+      <h1 className={css.title}>Phonebook</h1>
+      <div className={css.wrapper}>
+        <ContactForm
+          contacts={contacts}
+          onSubmitContact={onSubmitContact} />
+        <div className={css.contacts}>
+          <h2 className={css.contactsTitle} >Contacts</h2>
+          <Filter
+            filter={filter}
+            onInputChangeFilter={onInputChangeFilter} />
+          <ContactList
+            contacts={contacts}
+            filter={filter}
+            deleteContact={deleteContact} />
         </div>
       </div>
-    );
-}
-}
+    </div>
+  );
+};
