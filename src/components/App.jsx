@@ -25,10 +25,10 @@ export const App = () => {
   useEffect(() => {
     const storedContacts = localStorage.getItem("contacts");
     if (!storedContacts) {
-      localStorage.setItem("contacts", JSON.stringify(this.state.contacts));
+      localStorage.setItem("contacts", JSON.stringify(contacts));
     } else {
       try {
-        this.setState({ contacts: JSON.parse(storedContacts) });
+        setContacts(JSON.parse(storedContacts));
       } catch (error) {
         console.log("Invalid JSON in localStorage: " + storedContacts);
       };
