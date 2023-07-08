@@ -6,7 +6,10 @@ import ContactList from "./ContactList/ContactList";
 import css from './App.module.css';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(() => {
+    const storedContacts = localStorage.getItem("contacts");
+    return storedContacts ? JSON.parse(storedContacts) : []
+  });
   const [filter, setFilter] = useState('');
   
   const onInputChangeFilter = evt => {
@@ -21,19 +24,6 @@ export const App = () => {
   const deleteContact = contactID => {
     setContacts(contacts.filter(el => el.id !== contactID));
   };
-
-  useEffect(() => {
-    const storedContacts = localStorage.getItem("contacts");
-    if (!storedContacts) {
-      localStorage.setItem("contacts", JSON.stringify(contacts));
-    } else {
-      try {
-        setContacts(JSON.parse(storedContacts));
-      } catch (error) {
-        console.log("Invalid JSON in localStorage: " + storedContacts);
-      };
-    };
-  }, []);
 
   useEffect(() => {
     localStorage.setItem("contacts", JSON.stringify(contacts));
